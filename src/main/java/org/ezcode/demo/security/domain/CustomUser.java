@@ -1,9 +1,9 @@
-package org.ezcode.demo.domain;
+package org.ezcode.demo.security.domain;
 
 import java.util.Collection;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.ezcode.demo.domain.MemberVO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -27,8 +27,7 @@ public class CustomUser extends User {
 
     public CustomUser(MemberVO vo) {
         super(vo.getUserid(), vo.getUserpw(), 
-            vo
-            .getAuthList()
+            vo.getAuthList()
             .stream()
             .map(auth -> new SimpleGrantedAuthority(auth.getAuth()))
             .collect(Collectors.toList())

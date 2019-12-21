@@ -1,8 +1,8 @@
 package org.ezcode.demo.security;
 
-import org.ezcode.demo.domain.CustomUser;
 import org.ezcode.demo.domain.MemberVO;
 import org.ezcode.demo.mapper.MemberMapper;
+import org.ezcode.demo.security.domain.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,9 +21,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private MemberMapper memberMapper;
 
 	@Override
-	public UserDetails loadUserByUsername(String userid) throws UsernameNotFoundException {
-		MemberVO vo = memberMapper.read(userid);
-		log.warn("Load User By UserName : " + userid);
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        
+		log.warn("Load User By UserName : " + userName);
+        MemberVO vo = memberMapper.read(userName);
+        log.warn("queried by member mapper: " + vo);
 
 		return vo == null ? null : new CustomUser(vo);
 	}

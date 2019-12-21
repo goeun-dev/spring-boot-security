@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,37 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Setter(onMethod_ = {@Autowired})
     public DataSource dataSource;
 
-
-    
-    // @Override
-    // protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    //     log.info("configure--------------------------------");
-    //     auth.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("ADMIN");     // 내부적으로 접두어 'ROLE_'이 붙음
-
-        
-    //     // $2a$10$okrJIOZNAbyX9Ocs8ox58.zJW3SWvMf9m6o9PxCmIIEtIUUv12l1y
-    //     auth.inMemoryAuthentication()
-    //     .withUser("member")
-    //     .password("$2a$10$okrJIOZNAbyX9Ocs8ox58.zJW3SWvMf9m6o9PxCmIIEtIUUv12l1y")
-    //     .roles("MEMBER");
-    // }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.userDetailsService(customUserService())
         .passwordEncoder(passwordEncoder());
-
-        // log.info("configure JDBC--------------------------");
-
-        // String queryUser = "select userid, userpw, enabled from tbl_member where userid = ?";
-        // String queryDetails = "select userid, auth from tbl_member_auth where userid = ?";
-
-        // auth.jdbcAuthentication()
-        // .dataSource(dataSource)
-        // .passwordEncoder(passwordEncoder())
-        // .usersByUsernameQuery(queryUser)
-        // .authoritiesByUsernameQuery(queryDetails);
     }
 
     @Bean
@@ -80,10 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/member/admin").access("hasRole('ROLE_ADMIN')")
         .antMatchers("/member/member").access("hasRole('ROLE_MEMBER')");
 
-        // http.authorizeRequests()
-        // .antMatchers("/member/all").permitAll()
-        // .antMatchers("/member/member").hasRole("MEMBER");
-
         http.formLogin()
         .loginPage("/customLogin")
         .loginProcessingUrl("/login")
@@ -93,13 +65,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .logoutUrl("/customLogout")
         .invalidateHttpSession(true)
         .deleteCookies("remember-me", "JESSION_ID");
+
+        http.rememberMe()
+	      .key("ezcode")
+	      .tokenRepository(persistentTokenRepository())
+	      .tokenValiditySeconds(604800);
     }
+
+    @Bean
+	public PersistentTokenRepository persistentTokenRepository() {
+		JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+		repo.setDataSource(dataSource);
+		return repo;
+	}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
     
 }

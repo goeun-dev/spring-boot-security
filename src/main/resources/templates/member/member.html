@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -11,14 +11,15 @@
 <body>
     <h1>MEMBER</h1>
 
-    <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <div sec:authorize="isAuthenticated()">
-        Name: <span sec:authentication="name">SomeName</span><br />
-        Principal: <span sec:authentication="principal">PrincipalString</span><br />
-        Principal.email: <span sec:authentication="principal.username">Email</span><br />
-        HasRole(USER): <span sec:authorize="hasRole('ROLE_USER')">YES</span><br />
-        HasRole(ADMIN): <span sec:authorize="hasRole('ROLE_ADMIN')">YES</span>
-    </div>
+    <th:block sec:authorize="isAuthenticated()">
+    <p>principal : <span sec:authentication="principal"></span></p>
+    <p>MemberVO : <span sec:authentication="principal.member"></span></p>
+    <p>사용자이름 : <span sec:authentication="principal.username"></span></p>
+    <p>사용자아이디 : <span sec:authentication="principal.member.userid"></span></p>
+    <p>사용자 권한 리스트  : <span sec:authentication="principal.member.authList"></span></p> 
+
+	<span sec:authentication="principal.username"></span>님 반가워요!
+    </th:block>
 
     <a th:href="@{/customLogout}">로그아웃</a>
 </body>
