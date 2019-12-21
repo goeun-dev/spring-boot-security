@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>MEMBER</h1>
+
+    <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div sec:authorize="isAuthenticated()">
+        Name: <span sec:authentication="name">SomeName</span><br />
+        Principal: <span sec:authentication="principal">PrincipalString</span><br />
+        Principal.email: <span sec:authentication="principal.username">Email</span><br />
+        HasRole(USER): <span sec:authorize="hasRole('ROLE_USER')">YES</span><br />
+        HasRole(ADMIN): <span sec:authorize="hasRole('ROLE_ADMIN')">YES</span>
+    </div>
+
+    <a th:href="@{/customLogout}">로그아웃</a>
+</body>
+
+</html>
